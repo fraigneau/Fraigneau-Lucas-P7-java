@@ -38,6 +38,85 @@ All project documentation is available in the `docs` directory of the GitHub rep
 - **API Documentation**:
   - SpringDoc OpenAPI (Swagger)
 
+## 🏗️ Architecture Overview
+
+The application follows a monolithic architecture organized in layers according to the MVC (Model-View-Controller) pattern:
+
+### Architectural Layers
+
+1. **Presentation Layer**: 
+   - Controllers handle HTTP requests
+   - Thymeleaf templates render the UI
+   - DTOs (Data Transfer Objects) for data exchange with client
+
+2. **Service Layer**:
+   - Business logic implementation
+   - Transaction management
+   - Data validation and processing
+
+3. **Data Access Layer**:
+   - Spring Data JPA repositories
+   - Entity models representing database tables
+   - Data persistence operations
+
+4. **Cross-Cutting Concerns**:
+   - Security
+   - Exception handling
+   - Logging
+   - Configuration
+
+### Design Patterns Used
+
+- **DTO Pattern**: Separate data transfer objects from domain models
+- **Repository Pattern**: Abstract data access operations
+- **Dependency Injection**: Spring's IoC container manages component dependencies
+- **MVC Pattern**: Separation of concerns between Models, Views, and Controllers
+
+## 🔐 Security Architecture
+
+The application implements a comprehensive security model using Spring Security:
+
+### Authentication
+
+- Form-based authentication with username and password
+- BCrypt password encoding for secure storage
+- Custom UserDetailsService implementation that loads user data from the database
+
+### Authorization
+
+- Role-based access control with distinct ADMIN and USER roles
+- Method-level security using `@PreAuthorize` annotations
+- URL-based security patterns in SecurityFilterChain configuration
+
+### Security Rules
+
+1. **ADMIN Role**:
+   - Full access to all features and operations (CRUD)
+   - Can manage all users and system settings
+
+2. **USER Role**:
+   - Read-only access to most resources (view-only)
+   - Limited modification capabilities
+   - Can edit their own profile with conditional authorization:
+     ```java
+     @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
+     ```
+
+3. **UI Security Integration**:
+   - Thymeleaf Security integration with `sec:authorize` attributes
+   - Dynamic UI that only displays available actions based on user permissions:
+     ```html
+     <div sec:authorize="hasAuthority('ADMIN')">
+       <!-- Admin-only content -->
+     </div>
+     ```
+
+4. **Security Configuration**:
+   - Custom security filter chain
+   - Protected endpoints except login and error pages
+   - CSRF protection enabled
+   - Session management
+
 ## ✨ Key Features
 
 1. **User Management**
@@ -65,13 +144,6 @@ All project documentation is available in the `docs` directory of the GitHub rep
    - Business rule creation and management
    - Flexibility for specific configurations
 
-## 🔐 Security
-
-- Spring Security-based authentication
-- Role and permission management
-- Password encoding
-- Protection against unauthorized access
-
 ## 📦 Project Structure
 
 ```
@@ -80,6 +152,10 @@ src
 │   ├── java
 │   │   └── com/poseidoncapitalsolutions/trading
 │   │       ├── config           # Spring Configuration
+│   │       │   ├── SecurityConfig.java  # Security settings
+│   │       │   ├── SwaggerConfig.java   # API documentation
+│   │       │   ├── UserDetailsServiceImpl.java  # Authentication service
+│   │       │   └── UserDetailsImpl.java # User details implementation
 │   │       ├── controller       # Spring MVC Controllers
 │   │       ├── dto              # Data Transfer Objects
 │   │       ├── exception        # Custom Exception Handling
@@ -142,3 +218,12 @@ mvn test
 - **Standard User**:
   - Username: user
   - Password: 123123
+
+## 🌟 Best Practices
+
+- **Clean Code**: Following SOLID principles and clean code practices
+- **Security**: Implementing defense in depth with multiple security layers
+- **Testing**: Comprehensive unit and integration tests
+- **Documentation**: Well-documented code with JavaDoc
+- **DTO Pattern**: Separation of entity models from data transfer objects
+- **Validation**: Input validation at multiple levels

@@ -1,5 +1,6 @@
 package com.poseidoncapitalsolutions.trading.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -59,6 +60,7 @@ public class UserController {
      * @return The view name for the add user form.
      */
     @Operation(summary = "Show add user form", description = "Displays form for adding a new user")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/add")
     public String addUser(Model model) {
         model.addAttribute("newUser", new UserDTO());
@@ -75,6 +77,7 @@ public class UserController {
      *         or the form page if validation fails.
      */
     @Operation(summary = "Create new user", description = "Creates a new user with the provided details")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/user/validate")
     public String validate(
             @Parameter(description = "User data to be created", required = true) @ModelAttribute("newUser") @Valid UserDTO user,
@@ -97,6 +100,7 @@ public class UserController {
      * @return The view name for the update user form.
      */
     @Operation(summary = "Show update user form", description = "Displays form for updating an existing user")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @GetMapping("/user/update/{id}")
     public String showUpdateForm(
             @Parameter(description = "ID of the user to be updated", required = true) @PathVariable("id") int id,
@@ -116,6 +120,7 @@ public class UserController {
      *         or the form page if validation fails.
      */
     @Operation(summary = "Update existing user", description = "Updates an existing user with the provided details")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     @PostMapping("/user/update/{id}")
     public String updateUser(
             @Parameter(description = "ID of the user to be updated", required = true) @PathVariable("id") int id,
@@ -139,6 +144,7 @@ public class UserController {
      * @return A redirect to the user list page after the user is deleted.
      */
     @Operation(summary = "Delete user", description = "Deletes a user from the system")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/delete/{id}")
     public String deleteUser(
             @Parameter(description = "ID of the user to be deleted", required = true) @PathVariable("id") int id,
