@@ -2,6 +2,7 @@ package com.poseidoncapitalsolutions.trading.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,7 +19,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.validation.Valid;
 
 /**
@@ -64,6 +64,7 @@ public class CurveController {
      * @return The view name for the curve point add form.
      */
     @Operation(summary = "Display curve point add form", description = "Returns a page with the form to add a new curve point")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/curvePoint/add")
     public String addBidForm(Model model) {
         model.addAttribute("newCurvePoint", new CurvePointDTO());
@@ -80,6 +81,7 @@ public class CurveController {
      *         page if validation fails.
      */
     @Operation(summary = "Validate and add a new curve point", description = "Adds a new curve point from form data")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/curvePoint/validate")
     public String validate(
             @Parameter(description = "New curve point data to add", required = true, schema = @Schema(implementation = CurvePointDTO.class)) @ModelAttribute("newCurvePoint") @Valid CurvePointDTO curvePoint,
@@ -101,6 +103,7 @@ public class CurveController {
      * @return The view name for the curve point update form.
      */
     @Operation(summary = "Display curve point update form", description = "Returns a page with the form to update an existing curve point")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(
             @Parameter(description = "ID of the curve point to update", required = true) @PathVariable("id") int id,
@@ -120,6 +123,7 @@ public class CurveController {
      *         page if validation fails.
      */
     @Operation(summary = "Update an existing curve point", description = "Updates a curve point with the provided form data")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/curvePoint/update/{id}")
     public String updateBid(
             @Parameter(description = "ID of the curve point to update", required = true) @PathVariable("id") int id,
@@ -142,6 +146,7 @@ public class CurveController {
      * @return A redirect to the curve point list page after deletion.
      */
     @Operation(summary = "Delete a curve point", description = "Deletes a curve point by its ID")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/curvePoint/delete/{id}")
     public String deleteBid(
             @Parameter(description = "ID of the curve point to delete", required = true) @PathVariable("id") int id,

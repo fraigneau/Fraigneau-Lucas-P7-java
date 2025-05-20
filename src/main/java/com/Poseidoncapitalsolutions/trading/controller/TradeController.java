@@ -2,6 +2,7 @@ package com.poseidoncapitalsolutions.trading.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,7 +21,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.validation.Valid;
 
 /**
@@ -66,6 +66,7 @@ public class TradeController {
      * @return The view name for the trade add form.
      */
     @Operation(summary = "Display trade add form", description = "Returns a page with the form to add a new trade")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/trade/add")
     public String addUser(Model model) {
         model.addAttribute("newTrade", new TradeDTO());
@@ -82,6 +83,7 @@ public class TradeController {
      *         validation fails.
      */
     @Operation(summary = "Validate and add a new trade", description = "Adds a new trade from form data")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/trade/validate")
     public String validate(
             @Parameter(description = "New trade data to add", required = true, schema = @Schema(implementation = TradeDTO.class)) @ModelAttribute("newTrade") @Valid TradeDTO trade,
@@ -104,6 +106,7 @@ public class TradeController {
      * @return The view name for the trade update form.
      */
     @Operation(summary = "Display trade update form", description = "Returns a page with the form to update an existing trade")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully displayed update form"),
             @ApiResponse(responseCode = "404", description = "Trade not found")
@@ -127,6 +130,7 @@ public class TradeController {
      *         validation fails.
      */
     @Operation(summary = "Update an existing trade", description = "Updates a trade with the provided form data")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/trade/update/{id}")
     public String updateTrade(
             @Parameter(description = "ID of the trade to update", required = true) @PathVariable("id") int id,
@@ -150,6 +154,7 @@ public class TradeController {
      * @return A redirect to the trade list page after deletion.
      */
     @Operation(summary = "Delete a trade", description = "Deletes a trade by its ID")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "302", description = "Trade successfully deleted, redirecting to list"),
             @ApiResponse(responseCode = "404", description = "Trade not found")
